@@ -174,17 +174,7 @@ eval env e = case e of
 	(EVar id) 	-> lookupId id env
 	(EBool bool)	-> VBool bool
 	
-	(EBin o e1 e2)	-> case (o, (eval env e1), (eval env e2)) of
-		(Plus, VInt x, VInt y) 	-> VInt (x + y)
-		(Minus, VInt x, VInt y) -> VInt (x - y)
-		(Mul, VInt x, VInt y) 	-> VInt (x * y)
-		(Div, VInt x, VInt y) 	-> VInt (x `div` y)
-		-- 2b
-		(Eq, VInt x, VInt y) 	-> VBool (x == y)
-		(Ne, VInt x, VInt y) 	-> VBool (x /= y)
-		(Lt, VInt x, VInt y) 	-> VBool (x < y)
-		(Le, VInt x, VInt y) 	-> VBool (x <= y)
-		otherwise		-> throw (Error ("type error: binop"))
+	(EBin o e1 e2)	-> evalOp o (eval env e1) (eval env e2)
 
 	(EIf p t f)	-> case (eval env p) of 
 		VBool True 		-> eval env t
@@ -204,8 +194,17 @@ eval env e = case e of
 --------------------------------------------------------------------------------
 evalOp :: Binop -> Value -> Value -> Value
 --------------------------------------------------------------------------------
-evalOp = error "TBD:evalOp"
-
+evalOp o e1 e2 = case (o, e1, e2) of
+	(Plus, VInt x, VInt y) 	-> VInt (x + y)
+	(Minus, VInt x, VInt y) -> VInt (x - y)
+	(Mul, VInt x, VInt y) 	-> VInt (x * y)
+	(Div, VInt x, VInt y) 	-> VInt (x `div` y)
+	-- 2b
+	(Eq, VInt x, VInt y) 	-> VBool (x == y)
+	(Ne, VInt x, VInt y) 	-> VBool (x /= y)
+	(Lt, VInt x, VInt y) 	-> VBool (x < y)
+	(Le, VInt x, VInt y) 	-> VBool (x <= y)
+	otherwise		-> throw (Error ("type error: binop"))
 --------------------------------------------------------------------------------
 -- | `lookupId x env` returns the most recent
 --   binding for the variable `x` (i.e. the first
