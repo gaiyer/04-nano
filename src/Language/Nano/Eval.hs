@@ -189,6 +189,8 @@ eval env e = case e of
 		VBool False		-> eval env f
 		otherwise		-> throw (Error ("type error: eif"))
 
+	(ELet x e1 e2) 	-> let env2 = (x, (eval env e1)):env in eval env2 e2 
+	
 	otherwise	-> throw (Error ("type error"))
 
 --------------------------------------------------------------------------------
