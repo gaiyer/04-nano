@@ -168,16 +168,18 @@ exitError (Error msg) = return (VErr msg)
 eval :: Env -> Expr -> Value
 --------------------------------------------------------------------------------
 eval env e = case e of
+	-- 2a
 	ENil		-> VNil
 	EInt i		-> VInt i
 	(EVar id) 	-> lookupId id env
 	(EBool bool)	-> VBool bool
-
+	
 	(EBin o e1 e2)	-> case (o, (eval env e1), (eval env e2)) of
 		(Plus, VInt x, VInt y) 	-> VInt (x + y)
 		(Minus, VInt x, VInt y) -> VInt (x - y)
 		(Mul, VInt x, VInt y) 	-> VInt (x * y)
 		(Div, VInt x, VInt y) 	-> VInt (x `div` y)
+		-- 2b
 		(Eq, VInt x, VInt y) 	-> VBool (x == y)
 		(Ne, VInt x, VInt y) 	-> VBool (x /= y)
 		(Lt, VInt x, VInt y) 	-> VBool (x < y)
@@ -188,9 +190,15 @@ eval env e = case e of
 		VBool True 		-> eval env t
 		VBool False		-> eval env f
 		otherwise		-> throw (Error ("type error: eif"))
-
+	-- 2c
 	(ELet x e1 e2) 	-> let env2 = (x, (eval env e1)):env in eval env2 e2 
 	
+	-- 2d
+	(ELam x e) 	-> VClos env x e
+	(EApp e1 e2) 	-> case (eval env e1) of
+		(VClos env' x e) 	-> eval ((x, (eval env e2)):env') e
+		otherwise 		-> throw (Error ("type error: eapp"))
+
 	otherwise	-> throw (Error ("type error"))
 
 --------------------------------------------------------------------------------
