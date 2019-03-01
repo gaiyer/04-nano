@@ -34,6 +34,11 @@ tokens :-
   \)                            { \p _ -> RPAREN p }
   \:                            { \p _ -> COLON  p }
   \,                            { \p _ -> COMMA  p }
+  "True"			{ \p _ -> TRUE	 p }  
+  "False" 			{ \p _ -> FALSE	 p }  
+  $alpha [$alpha $digit]* 	{ \p s -> ID 	 p s }
+  $digit+			{ \p s -> NUM p (read s) }
+  
 
   -- DO NOT CHANGE ANYTHING AFTER THIS LINE ------------------------------------
   ------------------------------------------------------------------------------

@@ -68,6 +68,9 @@ Top  : ID '=' Expr                 { $3 }
      | Expr                        { $1 }
 
 Expr : TNUM                        { EInt $1 }
+     | ID			   			   { EVar $1 }		  	  
+     | true			   			   { EBool True }	  	  
+     | false		   			   { EBool False }		  	  
 
 {
 mkLam :: [Id] -> Expr -> Expr
