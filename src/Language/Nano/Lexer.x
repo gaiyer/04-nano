@@ -33,6 +33,8 @@ tokens :-
   "||"                          { \p _ -> OR    p }
   \(                            { \p _ -> LPAREN p }
   \)                            { \p _ -> RPAREN p }
+  \]                            { \p _ -> LBRAC p }
+  \[                            { \p _ -> RBRAC p }
   \:                            { \p _ -> COLON  p }
   \,                            { \p _ -> COMMA  p }
   

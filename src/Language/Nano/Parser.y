@@ -57,9 +57,11 @@ import Control.Exception
 
 -- Operators
 %right in
-%nonassoc '=' '==' '/=' '<' '<=' if then else
+%nonassoc if then else
 %right ':' '->'
-%left '||' '&&'
+%left '||'
+%left '&&'
+%left '==' '/=' '<' '<='
 %left '+' '-'
 %left '*'
 %%
