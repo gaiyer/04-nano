@@ -77,6 +77,18 @@ Expr : TNUM                        { EInt $1 }
      | let ID '=' Expr in Expr     { ELet $2 $4 $6 }
      | '\\' ID '->' Expr	       { ELam $2 $4 }
      | if Expr then Expr else Expr { EIf $2 $4 $6 }
+     
+     | Expr '+' Expr			{ EBin Plus $1 $3}
+     | Expr '-' Expr			{ EBin Minus $1 $3}
+     | Expr '*' Expr			{ EBin Mul $1 $3}
+     | Expr '==' Expr			{ EBin Eq $1 $3}
+     | Expr '/=' Expr			{ EBin Ne $1 $3}
+     | Expr '<' Expr			{ EBin Lt $1 $3}
+     | Expr '<=' Expr			{ EBin Le $1 $3}
+     | Expr '&&' Expr			{ EBin And $1 $3}
+     | Expr '||' Expr			{ EBin Or $1 $3}
+
+
          
 --IDs  : ID                          { [$1] }
 --     | ID IDs                      { (:) [$1] [IDs $2] }

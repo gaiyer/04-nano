@@ -49,8 +49,17 @@ tokens :-
   "then"                        { \p _  -> THEN         p }
   "else                         { \p _  -> ELSE         p }
 
-  $alpha [$alpha $digit]*       { \p s -> ID     p s }
-  $digit+                       { \p s -> NUM p (read s) }
+  -- arithmetic
+  \+				{ \p _ -> PLUS p }
+  \-				{ \p _ -> MINUS p }
+  \*				{ \p _ -> MUL p }
+  \<				{ \p _ -> LESS p }
+  \<=				{ \p _ -> LEQ p }
+  \=\=				{ \p _ -> EQL p }
+
+
+  $alpha [$alpha $digit]*       { \p s -> ID    p s }
+  $digit+                       { \p s -> NUM 	p (read s) }
 
   -- DO NOT CHANGE ANYTHING AFTER THIS LINE ------------------------------------
   ------------------------------------------------------------------------------
