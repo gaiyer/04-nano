@@ -168,47 +168,48 @@ exitError (Error msg) = return (VErr msg)
 eval :: Env -> Expr -> Value
 --------------------------------------------------------------------------------
 eval env e = case e of
-	ENil		-> VNil
-	EInt i		-> VInt i
-	(EVar id) 	-> lookupId id env
-	(EBool bool)	-> VBool bool
-	
-	(EBin o e1 e2)	-> evalOp o (eval env e1) (eval env e2)
+    ENil        -> VNil
+    EInt i      -> VInt i
+    (EVar id)   -> lookupId id env
+    (EBool bool)    -> VBool bool
+    
+    (EBin o e1 e2)  -> evalOp o (eval env e1) (eval env e2)
 
-	(EIf p t f)	-> case (eval env p) of 
-		VBool True 		-> eval env t
-		VBool False		-> eval env f
-		otherwise		-> throw (Error ("type error: eif"))
+    (EIf p t f) -> case (eval env p) of 
+        VBool True      -> eval env t
+        VBool False     -> eval env f
+        otherwise       -> throw (Error ("type error: eif"))
 
-	(ELet x e1 e2) 	-> let env2 = (x, (eval env e1)):env in eval env2 e2 
-	
-	(ELam x e) 	-> VClos env x e
-	(EApp e1 e2) 	-> case (eval env e1) of
-		(VClos env' x e) 	-> eval ((x, (eval env e2)):env') e
-	--	(VPrim x)		-> x e2
-		otherwise 		-> throw (Error ("type error: eapp"))
+    (ELet x e1 e2)  -> let env2 = (x, (eval env e1)):env in eval env2 e2 
+    
+    (ELam x e)  -> VClos env x e
+    (EApp e1 e2)    -> eval helpEnv e
+        where 
+            (VClos env' x e) = eval env e1
+            val = eval env e2
+            helpEnv = (x, val):env'
 
-	otherwise	-> throw (Error ("type error"))
+    otherwise   -> throw (Error ("type error"))
 
 --------------------------------------------------------------------------------
 evalOp :: Binop -> Value -> Value -> Value
 --------------------------------------------------------------------------------
 evalOp o e1 e2 = case (o, e1, e2) of
-	(Plus, VInt x, VInt y) 	-> VInt (x + y)
-	(Minus, VInt x, VInt y) -> VInt (x - y)
-	(Mul, VInt x, VInt y) 	-> VInt (x * y)
-	(Div, VInt x, VInt y) 	-> VInt (x `div` y)
-	(Eq, VInt x, VInt y) 	-> VBool (x == y)
-	(Ne, VInt x, VInt y) 	-> VBool (x /= y)
-	(Eq, VBool x, VBool y) 	-> VBool (x == y)
-	(Ne, VBool x, VBool y) 	-> VBool (x /= y)
-	(Lt, VInt x, VInt y) 	-> VBool (x < y)
-	(Le, VInt x, VInt y) 	-> VBool (x <= y)
-	(And, VBool x, VBool y)	-> VBool (x && y)
-	(Or, VBool x, VBool y)	-> VBool (x || y)
-	(Cons, x, VNil)		-> VPair x VNil
-	(Cons, x, VPair y z)	-> VPair x e2
-	otherwise		-> throw (Error ("type error: binop"))
+    (Plus, VInt x, VInt y)  -> VInt (x + y)
+    (Minus, VInt x, VInt y) -> VInt (x - y)
+    (Mul, VInt x, VInt y)   -> VInt (x * y)
+    (Div, VInt x, VInt y)   -> VInt (x `div` y)
+    (Eq, VInt x, VInt y)    -> VBool (x == y)
+    (Ne, VInt x, VInt y)    -> VBool (x /= y)
+    (Eq, VBool x, VBool y)  -> VBool (x == y)
+    (Ne, VBool x, VBool y)  -> VBool (x /= y)
+    (Lt, VInt x, VInt y)    -> VBool (x < y)
+    (Le, VInt x, VInt y)    -> VBool (x <= y)
+    (And, VBool x, VBool y) -> VBool (x && y)
+    (Or, VBool x, VBool y)  -> VBool (x || y)
+    (Cons, x, VNil)         -> VPair x VNil
+    (Cons, x, VPair y z)    -> VPair x e2
+    otherwise       -> throw (Error ("type error: binop"))
 --------------------------------------------------------------------------------
 -- | `lookupId x env` returns the most recent
 --   binding for the variable `x` (i.e. the first
@@ -228,14 +229,11 @@ lookupId :: Id -> Env -> Value
 --------------------------------------------------------------------------------
 lookupId x [] = throw (Error ("unbound variable: " ++ x))
 lookupId x ((name, val) : env)
-	| x == name = val
-	| otherwise = lookupId x env
+    | x == name = val
+    | otherwise = lookupId x env
 
 prelude :: Env
 prelude = []
---prelude = [ ("head", VPrim head)
---	  , ("tail", VPrim tail)
---	  ]  
 
 env0 :: Env
 env0 =  [ ("z1", VInt 0)

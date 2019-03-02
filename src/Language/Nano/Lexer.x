@@ -34,11 +34,23 @@ tokens :-
   \)                            { \p _ -> RPAREN p }
   \:                            { \p _ -> COLON  p }
   \,                            { \p _ -> COMMA  p }
-  "True"			{ \p _ -> TRUE	 p }  
-  "False" 			{ \p _ -> FALSE	 p }  
-  $alpha [$alpha $digit]* 	{ \p s -> ID 	 p s }
-  $digit+			{ \p s -> NUM p (read s) }
   
+  -- true false id num
+  "True"                        { \p _ -> TRUE   p }  
+  "False"                       { \p _ -> FALSE  p }  
+  
+  -- let = in \ lam -> if then else
+  "let"                         { \p _  -> LET          p }
+  \=                            { \p _  -> EQB          p }
+  "in"                          { \p    -> IN           p } 
+  \\                            { \p _  -> LAM          p }
+  \->                           { \p _  -> ARROW        p }
+  "if"                          { \p _  -> IF           p }
+  "then"                        { \p _  -> THEN         p }
+  "else                         { \p _  -> ELSE         p }
+
+  $alpha [$alpha $digit]*       { \p s -> ID     p s }
+  $digit+                       { \p s -> NUM p (read s) }
 
   -- DO NOT CHANGE ANYTHING AFTER THIS LINE ------------------------------------
   ------------------------------------------------------------------------------
