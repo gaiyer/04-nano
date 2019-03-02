@@ -89,7 +89,7 @@ Expr : TNUM                        { EInt $1 }
      | Expr '||' Expr			{ EBin Or $1 $3}
 
      | '(' Expr ')'			{ $2 }
-
+     | Expr Expr			{ EApp $1 $2 }
          
 --IDs  : ID                          { [$1] }
 --     | ID IDs                      { (:) [$1] [IDs $2] }
