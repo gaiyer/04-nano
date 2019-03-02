@@ -30,6 +30,7 @@ tokens :-
 
   in                            { \p _ -> IN     p }
   "&&"                          { \p _ -> AND    p }
+  "||"                          { \p _ -> OR    p }
   \(                            { \p _ -> LPAREN p }
   \)                            { \p _ -> RPAREN p }
   \:                            { \p _ -> COLON  p }
@@ -47,16 +48,16 @@ tokens :-
   \->                           { \p _  -> ARROW        p }
   "if"                          { \p _  -> IF           p }
   "then"                        { \p _  -> THEN         p }
-  "else                         { \p _  -> ELSE         p }
+  "else"                        { \p _  -> ELSE         p }
 
   -- arithmetic
   \+				{ \p _ -> PLUS p }
   \-				{ \p _ -> MINUS p }
   \*				{ \p _ -> MUL p }
   \<				{ \p _ -> LESS p }
-  \<=				{ \p _ -> LEQ p }
-  \=\=				{ \p _ -> EQL p }
-
+  "<="				{ \p _ -> LEQ p }
+  "=="				{ \p _ -> EQL p }
+  "/="				{ \p _ -> NEQ p }
 
   $alpha [$alpha $digit]*       { \p s -> ID    p s }
   $digit+                       { \p s -> NUM 	p (read s) }
